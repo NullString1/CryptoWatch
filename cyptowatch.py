@@ -48,7 +48,7 @@ if os.path.isfile(path):
         d.text((1740, 984-c*60), f"INC: {curs[c].inc}", font=fnt,
                fill=(255, 255, 255, 255))
     out = Image.alpha_composite(base, txt)
-    out.save(os.environ["LOCALAPPDATA"]+"\\back.png")
+    out.save(os.environ["LOCALAPPDATA"]+"\\Temp\\back.png")
     ctypes.windll.user32.SystemParametersInfoW(0x14, 0,
                                                os.environ["LOCALAPPDATA"] +
                                                "\\Temp\\back.png", 0)
@@ -66,6 +66,6 @@ else:
                fill=(255, 255, 255, 255))
     out = Image.alpha_composite(base, txt)
     out.save(os.environ["APPDATA"]+"\\Temp\\back.png")
-    ctypes.windll.user32.SystemParametersInfoW(0x14, 0,
+    ctypes.windll.user32.SystemParametersInfoW(0x14, 0,(
                                                os.environ["LOCALAPPDATA"] +
-                                               "\\Temp\\back.png", 0)
+                                               "\\Temp\\back.png"), 0)
