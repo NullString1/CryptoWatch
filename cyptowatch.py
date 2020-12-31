@@ -22,11 +22,11 @@ class cur:
                               stream=True)
         self.r.raw.decode_content = True
         self.data = (lxml.html.parse(self.r.raw)
-                     .xpath("//span[contains(@class, 'cmc-details-panel-price"
-                            "__price')]"))
+                     .xpath("//div[contains(@class, 'sc-16r8icm-0 kXPxnI"
+                            " priceTitle___1cXUG')]/*"))
         self.price = "$" + str(round(float(self.data[0].text[1:]
                                            .replace(",", "")), 4))
-        self.inc = self.data[1].text.replace("(", "").replace(")", "")
+        self.inc = self.data[1].text_content().replace("(", "").replace(")", "")
         self.name = name
 
 
