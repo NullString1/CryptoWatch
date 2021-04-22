@@ -16,7 +16,7 @@ class cur:
     inc = None
     name = None
     text = None
-
+    style = None
     def __init__(self, url, name):
         self.text = []
         self.r = requests.get(url, headers={"content-encoding": "gzip"},
@@ -30,7 +30,7 @@ class cur:
         self.inc = self.data[1].text_content().replace("(",
                                                        "").replace(")", "")
         style = self.data[1].attrib.get("style")
-        if style[style.find(";color:")+8:style.find(";padding")] == "fff":
+        if style.find("up-color") == -1:
             self.inc = "-"+self.inc
         self.name = name
         self.text.append(f"PRC ({self.name}): {self.price[:8]}")
