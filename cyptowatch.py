@@ -1,47 +1,39 @@
 import requests
-import lxml.html
+import json
 import ctypes
 import shutil
 import os.path
 import os
 from PIL import Image, ImageDraw, ImageFont
 
+currencies = ["BAT", "XMR", "BTC", "ETH", "LUNA"]
 curs = []
 
-
-class cur:
+class currency:
     r = None
-    data = None
     price = None
     inc = None
-    name = None
+    symbol = None
+    json = None
     text = None
-    style = None
-    def __init__(self, url, name):
+    def __init__(self, symbol, resp):
         self.text = []
-        self.r = requests.get(url, headers={"content-encoding": "gzip"},
-                              stream=True)
-        self.r.raw.decode_content = True
-        self.data = (lxml.html.parse(self.r.raw)
-                     .xpath("//div[contains(@class, 'sc-16r8icm-0 kXPxnI"
-                            " priceTitle___1cXUG')]/*"))
-        self.price = "$" + str(round(float(self.data[0].text[1:]
-                                           .replace(",", "")), 4))
-        self.inc = self.data[1].text_content().replace("(",
-                                                       "").replace(")", "")
-        style = self.data[1].attrib.get("style")
-        if style.find("up-color") == -1:
-            self.inc = "-"+self.inc
-        self.name = name
-        self.text.append(f"PRC ({self.name}): {self.price[:8]}")
-        self.text.append(f"INC: {self.inc}")
+        self.price = resp["data"][symbol]["quote"]["USD"]["price"]
+        self.inc = resp["data"][symbol]["quote"]["USD"]["percent_change_24h"]
+        self.text.append(f"PRC ({symbol}): {round(self.price, 2)}")
+        self.text.append(f"INC: {round(self.inc,2)}%")
 
 
-curs.append(cur("https://coinmarketcap.com/currencies/basic-attention-token",
-                "BAT"))
-curs.append(cur("https://coinmarketcap.com/currencies/monero", "XMR"))
-curs.append(cur("https://coinmarketcap.com/currencies/ethereum", "ETH"))
-curs.append(cur("https://coinmarketcap.com/currencies/bitcoin", "BTC"))
+
+url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol="
+for a in currencies:
+    url += a+","
+
+r = requests.get(url[:-1], headers={"X-CMC_PRO_API_KEY": "0890591f-29f5-4a82-85d7-66b87b3dba88"})
+resp = json.loads(r.text)
+
+for a in currencies:
+    curs.append(currency(a, resp))
 
 path = os.environ["LOCALAPPDATA"]+"\\original.png"
 
@@ -60,6 +52,6 @@ for c in range(len(curs)):
            fill=(255, 255, 255, 255))
 out = Image.alpha_composite(base, txt)
 out.save(os.environ["LOCALAPPDATA"]+"\\Temp\\back.png")
-ctypes.windll.user32.SystemParametersInfoW(0x14, 0, (
+ctypes.windll.user32.SystemParametersInfoW(0x14, 0,(
                                            os.environ["LOCALAPPDATA"] +
                                            "\\Temp\\back.png"), 0)
