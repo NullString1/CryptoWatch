@@ -6,6 +6,7 @@ import os.path
 import os
 from PIL import Image, ImageDraw, ImageFont
 
+apikey = ""
 currencies = ["BAT", "XMR", "BTC", "ETH", "LUNA"]
 curs = []
 
@@ -29,7 +30,7 @@ url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=
 for a in currencies:
     url += a+","
 
-r = requests.get(url[:-1], headers={"X-CMC_PRO_API_KEY": "0890591f-29f5-4a82-85d7-66b87b3dba88"})
+r = requests.get(url[:-1], headers={"X-CMC_PRO_API_KEY": apikey})
 resp = json.loads(r.text)
 
 for a in currencies:
