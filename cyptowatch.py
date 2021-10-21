@@ -7,8 +7,9 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 apikey = ""
-currencies = ["BAT", "XMR", "BTC", "ETH", "LUNA"]
+currencies = ["BAT", "VET", "BTC", "ETH", "LUNA", "XVS", "XRP", "LINK", "ADA"]
 curs = []
+
 
 class currency:
     r = None
@@ -17,6 +18,7 @@ class currency:
     symbol = None
     json = None
     text = None
+
     def __init__(self, symbol, resp):
         self.text = []
         self.price = resp["data"][symbol]["quote"]["USD"]["price"]
@@ -25,12 +27,13 @@ class currency:
         self.text.append(f"INC: {round(self.inc,2)}%")
 
 
-
 url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol="
-for a in currencies:
-    url += a+","
+url += currencies.__repr__().replace("'", "").replace(" ", "")[1:-1]
+# for a in currencies:
+#    url += a+","
 
-r = requests.get(url[:-1], headers={"X-CMC_PRO_API_KEY": apikey})
+r = requests.get(
+    url, headers={"X-CMC_PRO_API_KEY": apikey})
 resp = json.loads(r.text)
 
 for a in currencies:
@@ -47,12 +50,12 @@ txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
 fnt = ImageFont.truetype('C:\\Windows\\Fonts\\Arial.ttf', 18)
 d = ImageDraw.Draw(txt)
 for c in range(len(curs)):
-    d.text((1740, 954-c*60), curs[c].text[0],
+    d.text((1740, 1014-c*60), curs[c].text[0],
            font=fnt, fill=(255, 255, 255, 255))
-    d.text((1740, 984-c*60), curs[c].text[1], font=fnt,
+    d.text((1740, 1044-c*60), curs[c].text[1], font=fnt,
            fill=(255, 255, 255, 255))
 out = Image.alpha_composite(base, txt)
 out.save(os.environ["LOCALAPPDATA"]+"\\Temp\\back.png")
-ctypes.windll.user32.SystemParametersInfoW(0x14, 0,(
+ctypes.windll.user32.SystemParametersInfoW(0x14, 0, (
                                            os.environ["LOCALAPPDATA"] +
                                            "\\Temp\\back.png"), 0)
